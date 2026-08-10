@@ -1,0 +1,81 @@
+<div class="page">
+  <app-site-header></app-site-header>
+
+  <section class="page-hero">
+    <div class="glow"></div>
+    <div class="wrap">
+      <div class="crumbs"><a routerLink="/">Accueil</a><span>/</span><span>Offres d'emploi</span></div>
+      <div class="eyebrow" style="margin-top:18px">Carrières chez DAWC-HR</div>
+      <h1>Trouvez la mission qui sécurise votre avenir.</h1>
+      <p>Intérim, placement, paie, conformité sociale : rejoignez un cabinet qui place l'humain et la rigueur au cœur de chaque mission. Postulez en ligne en quelques minutes.</p>
+    </div>
+  </section>
+
+  <main class="page-main">
+    <div class="wrap board">
+      <div class="board-layout">
+        <aside class="filters">
+          <h3>Filtrer</h3>
+          <div class="fld">
+            <label for="q">Mot-clé</label>
+            <input id="q" class="input" type="text" placeholder="Intitulé, mot-clé…" [(ngModel)]="q" (keyup.enter)="load()">
+          </div>
+          <div class="fld">
+            <label for="loc">Lieu</label>
+            <input id="loc" class="input" type="text" placeholder="Douala, Yaoundé…" [(ngModel)]="location" (keyup.enter)="load()">
+          </div>
+          <div class="fld">
+            <label for="dep">Département</label>
+            <input id="dep" class="input" type="text" placeholder="RH, Paie, Audit…" [(ngModel)]="department" (keyup.enter)="load()">
+          </div>
+          <div class="fld" style="display:flex;gap:10px">
+            <button class="btn btn-primary btn-sm" style="flex:1;justify-content:center" (click)="load()">Rechercher</button>
+            <button class="btn btn-outline btn-sm" (click)="reset()">Réinitialiser</button>
+          </div>
+        </aside>
+
+        <div>
+          <div class="results-bar">
+            @if (!loading()) {
+              <span class="count">{{ jobs().length }} offre{{ jobs().length > 1 ? 's' : '' }} disponible{{ jobs().length > 1 ? 's' : '' }}</span>
+            } @else {
+              <span class="count">Chargement…</span>
+            }
+          </div>
+
+          @if (loading()) {
+            <div class="center-load"><span class="spinner dark"></span><span>Chargement des offres</span></div>
+          } @else if (error()) {
+            <div class="empty"><b>Une erreur est survenue</b><p>{{ error() }}</p></div>
+          } @else if (jobs().length === 0) {
+            <div class="empty">
+              <b>Aucune offre ne correspond</b>
+              <p>Aucune offre publiée ne correspond à votre recherche. Réessayez avec d'autres critères ou revenez bientôt.</p>
+            </div>
+          } @else {
+            <div class="job-list">
+              @for (job of jobs(); track job.id) {
+                <a class="job-card" [routerLink]="['/emplois', job.id]">
+                  <div class="top">
+                    <div>
+                      @if (job.department) { <div class="dept">{{ job.department }}</div> }
+                      <h3>{{ job.title }}</h3>
+                    </div>
+                  </div>
+                  <p class="excerpt">{{ excerpt(job.description) }}</p>
+                  <div class="meta">
+                    <span class="tagpill ct">{{ contractLabels[job.contractType] }}</span>
+                    <span class="tagpill loc">{{ job.location }}</span>
+                    @if (job.experienceLevel) { <span class="tagpill">{{ job.experienceLevel }}</span> }
+                  </div>
+                </a>
+              }
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <app-site-footer></app-site-footer>
+</div>

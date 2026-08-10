@@ -1,0 +1,79 @@
+<div class="page">
+  <app-site-header></app-site-header>
+
+  <main class="page-main">
+    @if (loading()) {
+      <div class="center-load" style="min-height:60vh"><span class="spinner dark"></span><span>Chargement de l'offre</span></div>
+    } @else if (notFound()) {
+      <div class="wrap" style="padding:80px 0;text-align:center">
+        <div class="empty">
+          <b>Offre introuvable</b>
+          <p>Cette offre n'existe pas ou n'est plus publiée.</p>
+          <a routerLink="/emplois" class="btn btn-primary btn-sm" style="margin-top:18px">Voir toutes les offres</a>
+        </div>
+      </div>
+    } @else if (job()) {
+      @if (job(); as j) {
+      <section class="page-hero">
+        <div class="glow"></div>
+        <div class="wrap">
+          <div class="crumbs">
+            <a routerLink="/">Accueil</a><span>/</span>
+            <a routerLink="/emplois">Offres</a><span>/</span>
+            <span>{{ j.title }}</span>
+          </div>
+          @if (j.department) { <div class="eyebrow" style="margin-top:18px">{{ j.department }}</div> }
+          <h1>{{ j.title }}</h1>
+          <div class="meta" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+            <span class="tagpill ct">{{ contractLabels[j.contractType] }}</span>
+            <span class="tagpill loc">{{ j.location }}</span>
+            @if (j.experienceLevel) { <span class="tagpill">{{ j.experienceLevel }}</span> }
+          </div>
+        </div>
+      </section>
+
+      <div class="wrap">
+        <div class="detail-layout">
+          <div class="detail-body">
+            <a routerLink="/emplois" class="back-link">← Toutes les offres</a>
+
+            <h2>Description du poste</h2>
+            <p class="rich">{{ j.description }}</p>
+
+            @if (asList(j.responsibilities).length) {
+              <h2>Responsabilités</h2>
+              <ul>
+                @for (item of asList(j.responsibilities); track item) { <li>{{ item }}</li> }
+              </ul>
+            }
+
+            @if (asList(j.requirements).length) {
+              <h2>Profil recherché</h2>
+              <ul>
+                @for (item of asList(j.requirements); track item) { <li>{{ item }}</li> }
+              </ul>
+            }
+          </div>
+
+          <aside class="apply-aside">
+            @if (formatSalary(j); as sal) {
+              <div class="salary"><small>Rémunération</small>{{ sal }}</div>
+            }
+            <div class="aside-meta">
+              <div class="row"><span>Contrat</span><b>{{ contractLabels[j.contractType] }}</b></div>
+              <div class="row"><span>Lieu</span><b>{{ j.location }}</b></div>
+              @if (j.experienceLevel) { <div class="row"><span>Expérience</span><b>{{ j.experienceLevel }}</b></div> }
+              @if (j.closingDate) { <div class="row"><span>Clôture</span><b>{{ j.closingDate | date:'dd/MM/yyyy' }}</b></div> }
+            </div>
+            <a [routerLink]="['/emplois', j.id, 'postuler']" class="btn btn-primary" style="width:100%;justify-content:center">
+              Postuler à cette offre <span class="arrow">↗</span>
+            </a>
+          </aside>
+        </div>
+      </div>
+      }
+    }
+  </main>
+
+  <app-site-footer></app-site-footer>
+</div>

@@ -1,0 +1,89 @@
+<div class="page">
+  <app-site-header></app-site-header>
+
+  <section class="page-hero">
+    <div class="glow"></div>
+    <div class="wrap">
+      <div class="crumbs">
+        <a routerLink="/">Accueil</a><span>/</span>
+        <a routerLink="/emplois">Offres</a><span>/</span>
+        <span>Candidature</span>
+      </div>
+      <div class="eyebrow" style="margin-top:18px">Postuler</div>
+      @if (job(); as j) {
+        <h1>{{ j.title }}</h1>
+        <p>{{ contractLabels[j.contractType] }} · {{ j.location }}</p>
+      } @else {
+        <h1>Déposer ma candidature</h1>
+      }
+    </div>
+  </section>
+
+  <main class="page-main">
+    <div class="wrap" style="padding:54px 0 110px">
+      @if (loadingJob()) {
+        <div class="center-load"><span class="spinner dark"></span><span>Chargement</span></div>
+      } @else if (submitted()) {
+        <div class="form-card">
+          <div class="success-box">
+            <div class="check">✓</div>
+            <h2>Candidature envoyée !</h2>
+            <p>Merci pour votre intérêt. Notre équipe RH étudie votre profil et reviendra vers vous si celui-ci correspond à nos besoins.</p>
+            <div style="margin-top:26px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+              <a routerLink="/emplois" class="btn btn-primary btn-sm">Voir d'autres offres</a>
+              <a routerLink="/" class="btn btn-outline btn-sm">Retour à l'accueil</a>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <a [routerLink]="['/emplois', job()?.id]" class="back-link">← Retour à l'offre</a>
+        <div class="form-card">
+          @if (error()) { <div class="alert err">{{ error() }}</div> }
+
+          <div class="fld">
+            <label>Nom complet <span class="req">*</span></label>
+            <input class="input" type="text" [formControl]="form.controls.fullName" placeholder="Votre nom et prénom">
+            @if (invalid('fullName')) { <div class="field-err">Veuillez indiquer votre nom complet.</div> }
+          </div>
+
+          <div class="form-grid-2">
+            <div class="fld">
+              <label>Email <span class="req">*</span></label>
+              <input class="input" type="email" [formControl]="form.controls.email" placeholder="vous@email.com">
+              @if (invalid('email')) { <div class="field-err">Email invalide.</div> }
+            </div>
+            <div class="fld">
+              <label>Téléphone</label>
+              <input class="input" type="tel" [formControl]="form.controls.phone" placeholder="+237 6XX XX XX XX">
+            </div>
+          </div>
+
+          <div class="fld">
+            <label>Lettre de motivation</label>
+            <textarea class="textarea" [formControl]="form.controls.coverLetter" placeholder="Présentez-vous en quelques lignes : votre parcours, votre motivation pour ce poste…"></textarea>
+          </div>
+
+          <div class="fld">
+            <label>CV (PDF ou Word, max 5 Mo)</label>
+            <label class="file-drop">
+              <input type="file" accept=".pdf,.doc,.docx,application/pdf,application/msword" (change)="onFile($event)">
+              @if (cvFile()) {
+                <span class="picked">📎 {{ cvFile()!.name }}</span>
+              } @else {
+                <span>Glissez votre CV ici ou <b style="color:var(--royal)">parcourez vos fichiers</b></span>
+              }
+            </label>
+            @if (cvError()) { <div class="field-err">{{ cvError() }}</div> }
+          </div>
+
+          <button class="btn btn-primary" style="width:100%;justify-content:center" [disabled]="submitting()" (click)="submit()">
+            @if (submitting()) { <span class="spinner"></span> Envoi en cours… }
+            @else { Envoyer ma candidature <span class="arrow">↗</span> }
+          </button>
+        </div>
+      }
+    </div>
+  </main>
+
+  <app-site-footer></app-site-footer>
+</div>

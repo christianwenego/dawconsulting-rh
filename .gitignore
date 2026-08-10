@@ -1,0 +1,11 @@
+# Node / Angular
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+# Java / Maven
+backend/target/
+# Uploads & local files
+uploads/
+backend/uploads/
+*.log
+.DS_Store

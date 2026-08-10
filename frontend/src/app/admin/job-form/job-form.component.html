@@ -1,0 +1,92 @@
+<a routerLink="/admin/dashboard" class="back-link">← Retour aux offres</a>
+
+<div class="toolbar">
+  <h1>{{ editId() ? 'Modifier l\'offre' : 'Nouvelle offre' }}</h1>
+</div>
+
+@if (loading()) {
+  <div class="center-load"><span class="spinner dark"></span><span>Chargement</span></div>
+} @else {
+  <div class="form-card" style="max-width:820px">
+    @if (error()) { <div class="alert err">{{ error() }}</div> }
+
+    <div class="fld">
+      <label>Intitulé du poste <span class="req">*</span></label>
+      <input class="input" type="text" [formControl]="form.controls.title" placeholder="Ex : Gestionnaire de paie">
+      @if (invalid('title')) { <div class="field-err">L'intitulé est requis.</div> }
+    </div>
+
+    <div class="form-grid-2">
+      <div class="fld">
+        <label>Département</label>
+        <input class="input" type="text" [formControl]="form.controls.department" placeholder="Ex : Ressources humaines">
+      </div>
+      <div class="fld">
+        <label>Lieu <span class="req">*</span></label>
+        <input class="input" type="text" [formControl]="form.controls.location" placeholder="Ex : Douala, Cameroun">
+        @if (invalid('location')) { <div class="field-err">Le lieu est requis.</div> }
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="fld">
+        <label>Type de contrat <span class="req">*</span></label>
+        <select class="select" [formControl]="form.controls.contractType">
+          @for (ct of contractTypes; track ct[0]) { <option [value]="ct[0]">{{ ct[1] }}</option> }
+        </select>
+      </div>
+      <div class="fld">
+        <label>Niveau d'expérience</label>
+        <input class="input" type="text" [formControl]="form.controls.experienceLevel" placeholder="Ex : 2-5 ans">
+      </div>
+    </div>
+
+    <div class="fld">
+      <label>Description <span class="req">*</span></label>
+      <textarea class="textarea" [formControl]="form.controls.description" placeholder="Présentation du poste, du contexte, de la mission…"></textarea>
+      @if (invalid('description')) { <div class="field-err">La description est requise.</div> }
+    </div>
+
+    <div class="fld">
+      <label>Responsabilités (une par ligne)</label>
+      <textarea class="textarea" [formControl]="form.controls.responsibilities" placeholder="- Gérer les bulletins de paie&#10;- Assurer les télédéclarations CNPS&#10;- …"></textarea>
+    </div>
+
+    <div class="fld">
+      <label>Profil recherché (une exigence par ligne)</label>
+      <textarea class="textarea" [formControl]="form.controls.requirements" placeholder="- Bac+3 en RH ou comptabilité&#10;- Maîtrise de la réglementation CNPS&#10;- …"></textarea>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="fld">
+        <label>Salaire min. (FCFA)</label>
+        <input class="input" type="number" [formControl]="form.controls.salaryMin" placeholder="Ex : 250000">
+      </div>
+      <div class="fld">
+        <label>Salaire max. (FCFA)</label>
+        <input class="input" type="number" [formControl]="form.controls.salaryMax" placeholder="Ex : 450000">
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <div class="fld">
+        <label>Statut <span class="req">*</span></label>
+        <select class="select" [formControl]="form.controls.status">
+          @for (st of jobStatuses; track st[0]) { <option [value]="st[0]">{{ st[1] }}</option> }
+        </select>
+      </div>
+      <div class="fld">
+        <label>Date de clôture</label>
+        <input class="input" type="date" [formControl]="form.controls.closingDate">
+      </div>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <button class="btn btn-royal" style="justify-content:center" [disabled]="saving()" (click)="save()">
+        @if (saving()) { <span class="spinner"></span> Enregistrement… }
+        @else { {{ editId() ? 'Enregistrer les modifications' : 'Créer l\'offre' }} }
+      </button>
+      <a routerLink="/admin/dashboard" class="btn btn-outline">Annuler</a>
+    </div>
+  </div>
+}

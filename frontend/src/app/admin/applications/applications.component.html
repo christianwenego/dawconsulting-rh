@@ -1,0 +1,64 @@
+<div class="toolbar">
+  <h1>Candidatures @if (jobFilter) { <span style="font-size:1rem;color:rgba(11,19,64,.5)">— offre #{{ jobFilter }}</span> }</h1>
+  @if (jobFilter) {
+    <a [routerLink]="['/admin/candidatures']" (click)="jobFilter=null;load()" class="btn btn-sm btn-outline">Voir toutes les candidatures</a>
+  }
+</div>
+
+@if (loading()) {
+  <div class="center-load"><span class="spinner dark"></span><span>Chargement</span></div>
+} @else if (error()) {
+  <div class="empty"><b>Erreur</b><p>{{ error() }}</p></div>
+} @else if (applications().length === 0) {
+  <div class="empty"><b>Aucune candidature</b><p>Aucune candidature n'a encore été reçue pour ce filtre.</p></div>
+} @else {
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Candidat</th>
+        <th>Offre</th>
+        <th>Reçue le</th>
+        <th>CV</th>
+        <th>Statut</th>
+        <th style="text-align:right">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (app of applications(); track app.id) {
+        <tr>
+          <td class="title-cell">
+            <b>{{ app.fullName }}</b>
+            <small>{{ app.email }}@if (app.phone) { · {{ app.phone }} }</small>
+          </td>
+          <td>{{ app.jobTitle }}</td>
+          <td>{{ app.createdAt | date:'dd/MM/yyyy HH:mm' }}</td>
+          <td>
+            @if (app.hasCv) {
+              <button class="btn btn-sm btn-outline" (click)="download(app)">⬇ CV</button>
+            } @else { <span style="color:rgba(11,19,64,.4)">—</span> }
+          </td>
+          <td>
+            <select class="select" style="padding:7px 10px;font-size:.82rem;width:auto" [ngModel]="app.status" (ngModelChange)="changeStatus(app, $event)">
+              @for (s of statusKeys; track s) { <option [value]="s">{{ statusLabels[s] }}</option> }
+            </select>
+          </td>
+          <td>
+            <div class="row-actions" style="justify-content:flex-end">
+              @if (app.coverLetter) {
+                <button class="btn btn-sm btn-outline" (click)="toggle(app.id)">{{ expanded() === app.id ? 'Masquer' : 'Lettre' }}</button>
+              }
+              <button class="btn btn-sm btn-danger" (click)="remove(app)">Suppr.</button>
+            </div>
+          </td>
+        </tr>
+        @if (expanded() === app.id && app.coverLetter) {
+          <tr>
+            <td colspan="6" style="background:var(--paper)">
+              <div style="padding:8px 4px;white-space:pre-line;color:rgba(11,19,64,.78);font-size:.94rem;max-width:760px">{{ app.coverLetter }}</div>
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+}

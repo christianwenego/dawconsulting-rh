@@ -1,0 +1,58 @@
+<div class="stat-grid">
+  <div class="stat"><div class="v">{{ jobs().length }}</div><div class="k">Offres au total</div></div>
+  <div class="stat"><div class="v">{{ published() }}</div><div class="k">Publiées</div></div>
+  <div class="stat"><div class="v">{{ drafts() }}</div><div class="k">Brouillons</div></div>
+  <div class="stat"><div class="v">{{ totalApplications() }}</div><div class="k">Candidatures reçues</div></div>
+</div>
+
+<div class="toolbar">
+  <h1>Offres d'emploi</h1>
+  <a routerLink="/admin/offres/nouvelle" class="btn btn-primary btn-sm">+ Nouvelle offre</a>
+</div>
+
+@if (loading()) {
+  <div class="center-load"><span class="spinner dark"></span><span>Chargement</span></div>
+} @else if (error()) {
+  <div class="empty"><b>Erreur</b><p>{{ error() }}</p></div>
+} @else if (jobs().length === 0) {
+  <div class="empty">
+    <b>Aucune offre pour l'instant</b>
+    <p>Créez votre première offre d'emploi pour la publier sur le site.</p>
+    <a routerLink="/admin/offres/nouvelle" class="btn btn-primary btn-sm" style="margin-top:16px">+ Créer une offre</a>
+  </div>
+} @else {
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Intitulé</th>
+        <th>Contrat</th>
+        <th>Lieu</th>
+        <th>Statut</th>
+        <th>Candidatures</th>
+        <th style="text-align:right">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (job of jobs(); track job.id) {
+        <tr>
+          <td class="title-cell">
+            <b>{{ job.title }}</b>
+            @if (job.department) { <small>{{ job.department }}</small> }
+          </td>
+          <td>{{ contractLabels[job.contractType] }}</td>
+          <td>{{ job.location }}</td>
+          <td><span [class]="'badge ' + statusClass(job.status)">{{ statusLabels[job.status] }}</span></td>
+          <td>
+            <a [routerLink]="['/admin/candidatures']" [queryParams]="{ jobId: job.id }">{{ job.applicationCount }}</a>
+          </td>
+          <td>
+            <div class="row-actions" style="justify-content:flex-end">
+              <a [routerLink]="['/admin/offres', job.id, 'modifier']" class="btn btn-sm btn-outline">Modifier</a>
+              <button class="btn btn-sm btn-danger" (click)="remove(job)">Supprimer</button>
+            </div>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+}

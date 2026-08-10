@@ -1,0 +1,54 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: dawc-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpwd
+      MYSQL_DATABASE: dawconsulting_rh
+      MYSQL_USER: dawconsulting
+      MYSQL_PASSWORD: dawconsulting
+    ports:
+      - "3306:3306"
+    volumes:
+      - dawc_db:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: dawc-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://db:3306/dawconsulting_rh?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      DB_USERNAME: dawconsulting
+      DB_PASSWORD: dawconsulting
+      JWT_SECRET: change-me-with-a-long-random-secret-in-production-please-0123456789
+      ADMIN_EMAIL: admin@dawconsulting.cm
+      ADMIN_PASSWORD: DawAdmin2026!
+      CORS_ALLOWED_ORIGINS: http://localhost:4200
+      UPLOAD_DIR: /app/uploads
+    ports:
+      - "8080:8080"
+    volumes:
+      - dawc_uploads:/app/uploads
+
+  frontend:
+    build: ./frontend
+    container_name: dawc-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+
+volumes:
+  dawc_db:
+  dawc_uploads:
