@@ -17,14 +17,14 @@ public interface JobRepository extends JpaRepository<Job, Long> {
     Optional<Job> findByIdAndStatus(Long id, JobStatus status);
 
     @Query("""
-            SELECT j FROM Job j
-            WHERE j.status = com.dawconsulting.rh.model.JobStatus.PUBLISHED
-              AND (:q IS NULL OR LOWER(j.title) LIKE LOWER(CONCAT('%', :q, '%'))
-                                OR LOWER(j.description) LIKE LOWER(CONCAT('%', :q, '%')))
-              AND (:department IS NULL OR j.department = :department)
-              AND (:location IS NULL OR LOWER(j.location) LIKE LOWER(CONCAT('%', :location, '%')))
-            ORDER BY j.createdAt DESC
-            """)
+        SELECT j FROM Job j
+        WHERE j.status = com.dawconsulting.rh.model.JobStatus.PUBLISHED
+          AND (:q IS NULL OR LOWER(j.title) LIKE LOWER(CAST(CONCAT('%', :q, '%') AS String))
+                            OR LOWER(j.description) LIKE LOWER(CAST(CONCAT('%', :q, '%') AS String)))
+          AND (:department IS NULL OR j.department = :department)
+          AND (:location IS NULL OR LOWER(j.location) LIKE LOWER(CAST(CONCAT('%', :location, '%') AS String)))
+        ORDER BY j.createdAt DESC
+        """)
     Page<Job> searchPublished(@Param("q") String q,
                               @Param("department") String department,
                               @Param("location") String location,
