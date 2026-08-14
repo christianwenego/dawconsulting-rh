@@ -29,8 +29,15 @@ public class JobService {
     @Transactional(readOnly = true)
     public List<JobResponse> listPublished(String q, String department, String location, int page, int size) {
         Page<Job> result = jobRepo.searchPublished(
-                emptyToNull(q), emptyToNull(department), emptyToNull(location),
-                PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), 50)));
+                JobStatus.PUBLISHED,
+                emptyToEmpty(q),
+                emptyToEmpty(department),
+                emptyToEmpty(location),
+                PageRequest.of(
+                        Math.max(page, 0),
+                        Math.min(Math.max(size, 1), 50)
+                )
+        );
         return result.getContent().stream().map(JobResponse::from).toList();
     }
 
@@ -91,7 +98,7 @@ public class JobService {
         job.setClosingDate(req.closingDate());
     }
 
-    private String emptyToNull(String s) {
-        return (s == null || s.isBlank()) ? null : s.trim();
+    private String emptyToEmpty(String s) {
+        return (s == null || s.isBlank()) ? "" : s.trim();
     }
 }
