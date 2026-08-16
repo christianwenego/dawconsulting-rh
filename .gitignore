@@ -9,3 +9,5 @@ uploads/
 backend/uploads/
 *.log
 .DS_Store
+.env
+*.env
