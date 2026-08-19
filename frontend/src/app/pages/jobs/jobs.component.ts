@@ -5,6 +5,8 @@ import { ApiService, JobFilter } from '../../core/services/api.service';
 import { Job, CONTRACT_LABELS } from '../../core/models/job.model';
 import { SiteHeaderComponent } from '../../shared/components/site-header.component';
 import { SiteFooterComponent } from '../../shared/components/site-footer.component';
+import { SeoService } from '../../core/services/seo.service';
+import { SITE_SEO } from '../../core/services/site-seo.constants';
 
 @Component({
   selector: 'app-jobs',
@@ -14,6 +16,7 @@ import { SiteFooterComponent } from '../../shared/components/site-footer.compone
 })
 export class JobsComponent implements OnInit {
   private api = inject(ApiService);
+  private seo = inject(SeoService);
 
   jobs = signal<Job[]>([]);
   loading = signal(true);
@@ -26,6 +29,27 @@ export class JobsComponent implements OnInit {
   readonly contractLabels = CONTRACT_LABELS;
 
   ngOnInit(): void {
+    this.seo.update({
+      title: 'Offres d’emploi à Douala et au Cameroun | DAW Consulting RH',
+      description: 'Découvrez les offres d’emploi, missions d’intérim et opportunités de recrutement proposées par DAW Consulting RH à Douala et au Cameroun.',
+      path: '/emplois',
+      jsonLd: [
+        {
+          '@type': 'CollectionPage',
+          name: 'Offres d’emploi DAW Consulting RH',
+          url: `${SITE_SEO.url}/emplois`,
+          inLanguage: 'fr-CM',
+          isPartOf: { '@id': `${SITE_SEO.url}/#website` }
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE_SEO.url },
+            { '@type': 'ListItem', position: 2, name: 'Offres d’emploi', item: `${SITE_SEO.url}/emplois` }
+          ]
+        }
+      ]
+    });
     this.load();
   }
 
@@ -54,6 +78,10 @@ export class JobsComponent implements OnInit {
     this.location = '';
     this.department = '';
     this.load();
+  }
+
+  jobUrl(job: Job): string {
+    return this.seo.jobPath(job.id, job.title);
   }
 
   excerpt(text: string): string {

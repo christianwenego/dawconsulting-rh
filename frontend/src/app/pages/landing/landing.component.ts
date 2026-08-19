@@ -2,6 +2,8 @@ import { Component, ElementRef, AfterViewInit, OnDestroy, inject, PLATFORM_ID } 
 import { isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { SiteFooterComponent } from '../../shared/components/site-footer.component';
+import { SeoService } from '../../core/services/seo.service';
+import { SITE_SEO } from '../../core/services/site-seo.constants';
 
 @Component({
   selector: 'app-landing',
@@ -11,8 +13,58 @@ import { SiteFooterComponent } from '../../shared/components/site-footer.compone
 })
 export class LandingComponent implements AfterViewInit, OnDestroy {
   private host = inject(ElementRef<HTMLElement>);
+  private seo = inject(SeoService);
   private platformId = inject(PLATFORM_ID);
   private onScroll = () => {};
+
+  constructor() {
+    this.seo.update({
+      title: 'DAW Consulting RH — Cabinet RH, intérim et conformité CNPS au Cameroun',
+      description: 'DAW Consulting Human Resources accompagne les entreprises à Douala et au Cameroun en conformité CNPS, gestion de la paie, externalisation RH, intérim et placement de personnel.',
+      path: '/',
+      jsonLd: [
+        {
+          '@type': 'Organization',
+          '@id': `${SITE_SEO.url}/#organization`,
+          name: SITE_SEO.name,
+          url: SITE_SEO.url,
+          logo: `${SITE_SEO.url}/favicon.ico`,
+          telephone: SITE_SEO.telephone,
+          email: SITE_SEO.email,
+          sameAs: SITE_SEO.sameAs
+        },
+        {
+          '@type': 'ProfessionalService',
+          '@id': `${SITE_SEO.url}/#business`,
+          name: SITE_SEO.name,
+          url: SITE_SEO.url,
+          description: SITE_SEO.description,
+          telephone: SITE_SEO.telephone,
+          email: SITE_SEO.email,
+          address: {
+            '@type': 'PostalAddress',
+            addressLocality: SITE_SEO.city,
+            addressCountry: SITE_SEO.country
+          },
+          areaServed: { '@type': 'Country', name: SITE_SEO.countryName },
+          parentOrganization: { '@id': `${SITE_SEO.url}/#organization` }
+        },
+        {
+          '@type': 'WebSite',
+          '@id': `${SITE_SEO.url}/#website`,
+          name: SITE_SEO.name,
+          url: SITE_SEO.url,
+          inLanguage: 'fr-CM',
+          publisher: { '@id': `${SITE_SEO.url}/#organization` },
+          potentialAction: {
+            '@type': 'SearchAction',
+            target: `${SITE_SEO.url}/emplois?q={search_term_string}`,
+            'query-input': 'required name=search_term_string'
+          }
+        }
+      ]
+    });
+  }
 
   ngAfterViewInit(): void {
     if (!isPlatformBrowser(this.platformId)) return;

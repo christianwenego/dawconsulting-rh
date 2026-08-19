@@ -8,6 +8,11 @@ export const routes: Routes = [
     title: 'DAW Consulting RH — Conformité sociale & intérim au Cameroun'
   },
   {
+    path: 'services/:slug',
+    loadComponent: () => import('./pages/service/service-page.component').then((m) => m.ServicePageComponent),
+    title: 'Services RH — DAW Consulting Human Resources'
+  },
+  {
     path: 'emplois',
     loadComponent: () => import('./pages/jobs/jobs.component').then((m) => m.JobsComponent),
     title: 'Offres d\'emploi — DAWC-HR'

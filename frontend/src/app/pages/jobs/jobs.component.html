@@ -55,7 +55,7 @@
           } @else {
             <div class="job-list">
               @for (job of jobs(); track job.id) {
-                <a class="job-card" [routerLink]="['/emplois', job.id]">
+                <a class="job-card" [routerLink]="jobUrl(job)">
                   <div class="top">
                     <div>
                       @if (job.department) { <div class="dept">{{ job.department }}</div> }

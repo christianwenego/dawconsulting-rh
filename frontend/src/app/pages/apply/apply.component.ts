@@ -5,6 +5,7 @@ import { ApiService } from '../../core/services/api.service';
 import { Job, CONTRACT_LABELS } from '../../core/models/job.model';
 import { SiteHeaderComponent } from '../../shared/components/site-header.component';
 import { SiteFooterComponent } from '../../shared/components/site-footer.component';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'app-apply',
@@ -16,6 +17,7 @@ export class ApplyComponent implements OnInit {
   private api = inject(ApiService);
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
+  private seo = inject(SeoService);
 
   job = signal<Job | null>(null);
   loadingJob = signal(true);
@@ -36,6 +38,12 @@ export class ApplyComponent implements OnInit {
   });
 
   ngOnInit(): void {
+    this.seo.update({
+      title: 'Postuler à une offre | DAW Consulting RH',
+      description: 'Formulaire de candidature DAW Consulting RH.',
+      path: `/emplois/${this.route.snapshot.paramMap.get('id')}/postuler`,
+      robots: 'noindex,follow'
+    });
     this.jobId = Number(this.route.snapshot.paramMap.get('id'));
     this.api.getPublishedJob(this.jobId).subscribe({
       next: (job) => {

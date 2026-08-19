@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../core/services/auth.service';
+import { SeoService } from '../core/services/seo.service';
 
 @Component({
   selector: 'app-admin-shell',
@@ -41,6 +42,14 @@ import { AuthService } from '../core/services/auth.service';
 export class AdminShellComponent {
   auth = inject(AuthService);
   private router = inject(Router);
+
+  constructor(seo: SeoService) {
+    seo.update({
+      title: 'Administration | DAW Consulting RH',
+      description: 'Espace d’administration DAW Consulting RH.',
+      robots: 'noindex,nofollow,noarchive'
+    });
+  }
 
   logout(): void {
     this.auth.logout();

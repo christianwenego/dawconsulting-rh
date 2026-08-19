@@ -1,9 +1,17 @@
+www.dawconsultinghr.com {
+    redir https://dawconsultinghr.com{uri} permanent
+}
+
 dawconsultinghr.com {
 
     encode gzip
 
     handle /api/* {
         reverse_proxy backend:8080
+    }
+
+    handle /sitemap.xml {
+        reverse_proxy frontend:80
     }
 
     handle {

@@ -1,0 +1,47 @@
+<div class="page">
+  <app-site-header></app-site-header>
+
+  @if (page; as p) {
+    <section class="page-hero">
+      <div class="glow"></div>
+      <div class="wrap">
+        <div class="crumbs"><a routerLink="/">Accueil</a><span>/</span><span>Services</span><span>/</span><span>{{ p.h1 }}</span></div>
+        <div class="eyebrow" style="margin-top:18px">DAW Consulting Human Resources · Douala · Cameroun</div>
+        <h1>{{ p.h1 }}</h1>
+        <p>{{ p.intro }}</p>
+      </div>
+    </section>
+
+    <main class="page-main">
+      <div class="wrap detail-layout">
+        <div class="detail-body">
+          @for (section of p.sections; track section.title) {
+            <section style="margin-bottom:48px">
+              <h2>{{ section.title }}</h2>
+              <p class="rich">{{ section.text }}</p>
+              <ul>
+                @for (point of section.points; track point) { <li>{{ point }}</li> }
+              </ul>
+            </section>
+          }
+
+          <section style="margin-top:40px">
+            <h2>Pourquoi choisir DAW Consulting RH ?</h2>
+            <p class="rich">Notre objectif est de réduire votre charge administrative tout en renforçant la qualité de vos processus RH et sociaux. Nous intervenons comme un interlocuteur unique, avec une approche adaptée aux réalités des entreprises au Cameroun.</p>
+          </section>
+        </div>
+
+        <aside class="apply-aside">
+          <h3>Parlons de votre besoin</h3>
+          <p>Expliquez-nous votre situation et nous vous orienterons vers la solution la plus adaptée.</p>
+          <a routerLink="/emplois" class="btn btn-primary" style="width:100%;justify-content:center">Voir les opportunités <span class="arrow">↗</span></a>
+          <a routerLink="/" fragment="contact" class="btn btn-outline" style="width:100%;justify-content:center;margin-top:10px">Nous contacter</a>
+        </aside>
+      </div>
+    </main>
+  } @else {
+    <main class="page-main"><div class="wrap" style="padding:100px 0"><h1>Page introuvable</h1></div></main>
+  }
+
+  <app-site-footer></app-site-footer>
+</div>
